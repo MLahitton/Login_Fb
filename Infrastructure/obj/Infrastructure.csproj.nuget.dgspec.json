@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\mlahi\\Desktop\\Dev_CSharp\\login_Fb\\Infrastructure\\Infrastructure.csproj": {}
+    "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Infrastructure\\Infrastructure.csproj": {}
   },
   "projects": {
-    "C:\\Users\\mlahi\\Desktop\\Dev_CSharp\\login_Fb\\Application\\Application.csproj": {
+    "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Application\\Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\mlahi\\Desktop\\Dev_CSharp\\login_Fb\\Application\\Application.csproj",
+        "projectUniqueName": "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Application\\Application.csproj",
         "projectName": "Application",
-        "projectPath": "C:\\Users\\mlahi\\Desktop\\Dev_CSharp\\login_Fb\\Application\\Application.csproj",
-        "packagesPath": "C:\\Users\\mlahi\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\mlahi\\Desktop\\Dev_CSharp\\login_Fb\\Application\\obj\\",
+        "projectPath": "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Application\\Application.csproj",
+        "packagesPath": "C:\\Users\\amari\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Application\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\mlahi\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\amari\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -26,8 +26,8 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\mlahi\\Desktop\\Dev_CSharp\\login_Fb\\Domain\\Domain.csproj": {
-                "projectPath": "C:\\Users\\mlahi\\Desktop\\Dev_CSharp\\login_Fb\\Domain\\Domain.csproj"
+              "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Domain\\Domain.csproj": {
+                "projectPath": "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Domain\\Domain.csproj"
               }
             }
           }
@@ -77,7 +77,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.202/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -355,17 +355,17 @@
         }
       }
     },
-    "C:\\Users\\mlahi\\Desktop\\Dev_CSharp\\login_Fb\\Domain\\Domain.csproj": {
+    "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Domain\\Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\mlahi\\Desktop\\Dev_CSharp\\login_Fb\\Domain\\Domain.csproj",
+        "projectUniqueName": "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Domain\\Domain.csproj",
         "projectName": "Domain",
-        "projectPath": "C:\\Users\\mlahi\\Desktop\\Dev_CSharp\\login_Fb\\Domain\\Domain.csproj",
-        "packagesPath": "C:\\Users\\mlahi\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\mlahi\\Desktop\\Dev_CSharp\\login_Fb\\Domain\\obj\\",
+        "projectPath": "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Domain\\Domain.csproj",
+        "packagesPath": "C:\\Users\\amari\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\mlahi\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\amari\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -416,7 +416,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.202/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -694,17 +694,17 @@
         }
       }
     },
-    "C:\\Users\\mlahi\\Desktop\\Dev_CSharp\\login_Fb\\Infrastructure\\Infrastructure.csproj": {
+    "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Infrastructure\\Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\mlahi\\Desktop\\Dev_CSharp\\login_Fb\\Infrastructure\\Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Infrastructure\\Infrastructure.csproj",
         "projectName": "Infrastructure",
-        "projectPath": "C:\\Users\\mlahi\\Desktop\\Dev_CSharp\\login_Fb\\Infrastructure\\Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\mlahi\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\mlahi\\Desktop\\Dev_CSharp\\login_Fb\\Infrastructure\\obj\\",
+        "projectPath": "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Infrastructure\\Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\amari\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\mlahi\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\amari\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -716,11 +716,11 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\mlahi\\Desktop\\Dev_CSharp\\login_Fb\\Application\\Application.csproj": {
-                "projectPath": "C:\\Users\\mlahi\\Desktop\\Dev_CSharp\\login_Fb\\Application\\Application.csproj"
+              "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Application\\Application.csproj": {
+                "projectPath": "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Application\\Application.csproj"
               },
-              "C:\\Users\\mlahi\\Desktop\\Dev_CSharp\\login_Fb\\Domain\\Domain.csproj": {
-                "projectPath": "C:\\Users\\mlahi\\Desktop\\Dev_CSharp\\login_Fb\\Domain\\Domain.csproj"
+              "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Domain\\Domain.csproj": {
+                "projectPath": "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Domain\\Domain.csproj"
               }
             }
           }
@@ -800,7 +800,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.202/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
