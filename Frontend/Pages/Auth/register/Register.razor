@@ -1,10 +1,12 @@
+@using Frontend.Services.Auth
+@using Frontend.Models.Auth
+
 @page "/register"
 @inject AuthApiService AuthService
 <div class="register-container">
 
     <div class="left-panel">
-
-        <img src="images/security.png" class="illustration" />
+        <img src="/img/primari.png" class="illustration" />
 
         <h3>Seguro y confiable</h3>
 
@@ -20,7 +22,7 @@
 
         <p>Empieza a gestionar todo en un solo lugar.</p>
 
-        <EditForm Model="registerModel" OnValidSubmit="Register">
+        <EditForm Model="registerModel" OnValidSubmit="HandleRegister">
 
             <DataAnnotationsValidator />
 
@@ -52,7 +54,7 @@
                 <ValidationMessage For="@(() => registerModel.Password)" />
             </div>
 
-            <button class="register-button">
+            <button class="register-button" type="submit">
                 Crear cuenta
             </button>
 
@@ -66,7 +68,7 @@
 
     RegisterRequest registerModel = new();
 
-    async Task Register()
+    async Task HandleRegister()
     {
          try
         {
