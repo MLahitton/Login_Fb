@@ -1,0 +1,82 @@
+@page "/register"
+@inject AuthApiService AuthService
+<div class="register-container">
+
+    <div class="left-panel">
+
+        <img src="images/security.png" class="illustration" />
+
+        <h3>Seguro y confiable</h3>
+
+        <p>
+            Protegemos tus datos con los más altos estándares.
+        </p>
+
+    </div>
+
+    <div class="right-panel">
+
+        <h1>Crea tu cuenta</h1>
+
+        <p>Empieza a gestionar todo en un solo lugar.</p>
+
+        <EditForm Model="registerModel" OnValidSubmit="Register">
+
+            <DataAnnotationsValidator />
+
+            <div class="form-group">
+                <label>Nombre completo</label>
+
+                <InputText class="form-control"
+                           @bind-Value="registerModel.Name" />
+
+                <ValidationMessage For="@(() => registerModel.Name)" />
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+
+                <InputText class="form-control"
+                           @bind-Value="registerModel.Email" />
+
+                <ValidationMessage For="@(() => registerModel.Email)" />
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+
+                <InputText type="password"
+                           class="form-control"
+                           @bind-Value="registerModel.Password" />
+
+                <ValidationMessage For="@(() => registerModel.Password)" />
+            </div>
+
+            <button class="register-button">
+                Crear cuenta
+            </button>
+
+        </EditForm>
+
+    </div>
+
+</div>
+
+@code {
+
+    RegisterRequest registerModel = new();
+
+    async Task Register()
+    {
+         try
+        {
+            await AuthService.Register(registerModel);
+
+            Console.WriteLine("Registro exitoso");
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+}
