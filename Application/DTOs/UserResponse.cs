@@ -1,12 +1,15 @@
 using Domain.Entities;
 
-namespace Applications.DTOs;
+namespace Application.DTOs;
 
 public class UserResponse
 {
     public string Id { get; set; } = string.Empty;
+
     public string FullName { get; set; } = string.Empty;
+
     public string Email { get; set; } = string.Empty;
+
     public bool EmailConfirmed { get; set; }
 
     public static UserResponse FromUser(ApplicationUser user)

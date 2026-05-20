@@ -1,4 +1,4 @@
-using Applications.DTOs;
+using Application.DTOs;
 
 namespace Application.DTOs;
 

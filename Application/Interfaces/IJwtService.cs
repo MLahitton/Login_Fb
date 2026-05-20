@@ -4,7 +4,9 @@ namespace Application.Interfaces;
 
 public interface IJwtService
 {
-    (string Token, DateTime ExpiresAtUtc) GenerateToken(ApplicationUser user, IList<string> roles);
-    string GenerateFreshToken();
+    (string Token, DateTime ExpiresAtUtc) GenerateAccessToken(ApplicationUser user, IList<string> roles);
+
+    string GenerateRefreshToken();
+
     string HashToken(string token);
 }

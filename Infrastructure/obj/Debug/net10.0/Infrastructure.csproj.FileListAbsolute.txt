@@ -1,4 +1,5 @@
 C:\Users\mlahi\Desktop\Dev_CSharp\login_Fb\Infrastructure\bin\Debug\net10.0\Infrastructure.deps.json
+C:\Users\mlahi\Desktop\Dev_CSharp\login_Fb\Infrastructure\bin\Debug\net10.0\Infrastructure.runtimeconfig.json
 C:\Users\mlahi\Desktop\Dev_CSharp\login_Fb\Infrastructure\bin\Debug\net10.0\Infrastructure.dll
 C:\Users\mlahi\Desktop\Dev_CSharp\login_Fb\Infrastructure\bin\Debug\net10.0\Infrastructure.pdb
 C:\Users\mlahi\Desktop\Dev_CSharp\login_Fb\Infrastructure\bin\Debug\net10.0\Application.dll
@@ -15,6 +16,5 @@ C:\Users\mlahi\Desktop\Dev_CSharp\login_Fb\Infrastructure\obj\Debug\net10.0\Infr
 C:\Users\mlahi\Desktop\Dev_CSharp\login_Fb\Infrastructure\obj\Debug\net10.0\Infrastructure.dll
 C:\Users\mlahi\Desktop\Dev_CSharp\login_Fb\Infrastructure\obj\Debug\net10.0\refint\Infrastructure.dll
 C:\Users\mlahi\Desktop\Dev_CSharp\login_Fb\Infrastructure\obj\Debug\net10.0\Infrastructure.pdb
-C:\Users\mlahi\Desktop\Dev_CSharp\login_Fb\Infrastructure\obj\Debug\net10.0\ref\Infrastructure.dll
-C:\Users\mlahi\Desktop\Dev_CSharp\login_Fb\Infrastructure\bin\Debug\net10.0\Infrastructure.runtimeconfig.json
 C:\Users\mlahi\Desktop\Dev_CSharp\login_Fb\Infrastructure\obj\Debug\net10.0\Infrastructure.genruntimeconfig.cache
+C:\Users\mlahi\Desktop\Dev_CSharp\login_Fb\Infrastructure\obj\Debug\net10.0\ref\Infrastructure.dll
