@@ -62,5 +62,18 @@ namespace Frontend.Services.Auth
 
             Console.WriteLine($"Código confirmado: {request.Code}");
         }
+        public async Task ForgotPassword(ForgotPasswordRequest request)
+        {
+            await Task.Delay(1000);
+
+            Console.WriteLine("Correo de recuperación enviado");
+        }
+
+        public async Task ResetPassword(ResetPasswordRequest request)
+        {
+            await Task.Delay(1000);
+
+            Console.WriteLine("Contraseña actualizada");
+        }
     }
 }
