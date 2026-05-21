@@ -17,33 +17,41 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = browser
 build_property.RootNamespace = Frontend
 build_property.RootNamespace = Frontend
-build_property.ProjectDir = C:\Users\amari\OneDrive\Documents\TrabajoD\Login_Fb\Frontend\
+build_property.ProjectDir = C:\Users\dmant\OneDrive\Documentos\proyectCshap\ProyectJexpo\Login_Fb\Frontend\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = false
 build_property.RazorLangVersion = 9.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\amari\OneDrive\Documents\TrabajoD\Login_Fb\Frontend
+build_property.MSBuildProjectDirectory = C:\Users\dmant\OneDrive\Documentos\proyectCshap\ProyectJexpo\Login_Fb\Frontend
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 10.0
 build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/amari/OneDrive/Documents/TrabajoD/Login_Fb/Frontend/App.razor]
+[C:/Users/dmant/OneDrive/Documentos/proyectCshap/ProyectJexpo/Login_Fb/Frontend/App.razor]
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/amari/OneDrive/Documents/TrabajoD/Login_Fb/Frontend/_Imports.razor]
+[C:/Users/dmant/OneDrive/Documentos/proyectCshap/ProyectJexpo/Login_Fb/Frontend/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/amari/OneDrive/Documents/TrabajoD/Login_Fb/Frontend/Layout/MainLayout.razor]
+[C:/Users/dmant/OneDrive/Documentos/proyectCshap/ProyectJexpo/Login_Fb/Frontend/Layout/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = TGF5b3V0XE1haW5MYXlvdXQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-yxi2lmzgn0
 
-[C:/Users/amari/OneDrive/Documents/TrabajoD/Login_Fb/Frontend/Layout/NavMenu.razor]
+[C:/Users/dmant/OneDrive/Documentos/proyectCshap/ProyectJexpo/Login_Fb/Frontend/Layout/NavMenu.razor]
 build_metadata.AdditionalFiles.TargetPath = TGF5b3V0XE5hdk1lbnUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-fpiqm1rjhp
 
-[C:/Users/amari/OneDrive/Documents/TrabajoD/Login_Fb/Frontend/Pages/Auth/register/Register.razor]
+[C:/Users/dmant/OneDrive/Documentos/proyectCshap/ProyectJexpo/Login_Fb/Frontend/Pages/Auth/login/Login.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQXV0aFxsb2dpblxMb2dpbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-lak7iootv0
+
+[C:/Users/dmant/OneDrive/Documentos/proyectCshap/ProyectJexpo/Login_Fb/Frontend/Pages/Auth/register/Register.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQXV0aFxyZWdpc3RlclxSZWdpc3Rlci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-lz1ykzny6j
+
+[C:/Users/dmant/OneDrive/Documentos/proyectCshap/ProyectJexpo/Login_Fb/Frontend/Pages/Auth/VerifyEmail/VerifyCode.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQXV0aFxWZXJpZnlFbWFpbFxWZXJpZnlDb2RlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = b-su5bh0holb

@@ -1,0 +1,84 @@
+@using Frontend.Services.Auth
+@using Frontend.Models.Auth
+
+@page "/login"
+@inject AuthApiService AuthService
+@inject NavigationManager Nav
+
+<div class="register-container">
+
+    <div class="left-panel">
+        <img src="/img/lock.png" class="illustration" />
+
+        <h3>Tu seguridad es nuestra prioridad</h3>
+
+        <p>
+            Usamos cifrado en todas tus conexiones.
+        </p>
+    </div>
+
+    <div class="right-panel">
+
+        <h1>Bienvenido de vuelta</h1>
+
+        <p>Ingresa para continuar a tu cuenta.</p>
+
+        <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+
+            <DataAnnotationsValidator />
+
+            <div class="form-group">
+                <label>Correo electrónico</label>
+
+                <InputText class="form-control"
+                        @bind-Value="loginModel.Email" />
+
+                <ValidationMessage For="@(() => loginModel.Email)" />
+            </div>
+
+            <div class="form-group">
+                <label>Contraseña</label>
+
+                <InputText type="password"
+                            class="form-control"
+                            @bind-Value="loginModel.Password" />
+
+                <ValidationMessage For="@(() => loginModel.Password)" />
+            </div>
+
+            <button class="register-button" type="submit">
+                Iniciar sesión
+            </button>
+
+        </EditForm>
+
+        <p style="margin-top:15px;">
+            ¿No tienes una cuenta?
+            <a href="/register">Regístrate</a>
+        </p>
+
+    </div>
+
+</div>
+
+@code {
+
+    LoginRequest loginModel = new();
+
+    async Task HandleLogin()
+    {
+        try
+        {
+            await AuthService.Login(loginModel);
+
+            Console.WriteLine("Login exitoso");
+
+            // Redirigir después de login
+            Nav.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+}

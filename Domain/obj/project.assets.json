@@ -859,19 +859,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\amari\\.nuget\\packages\\": {}
+    "C:\\Users\\dmant\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Domain\\Domain.csproj",
+      "projectUniqueName": "C:\\Users\\dmant\\OneDrive\\Documentos\\proyectCshap\\ProyectJexpo\\Login_Fb\\Domain\\Domain.csproj",
       "projectName": "Domain",
-      "projectPath": "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Domain\\Domain.csproj",
-      "packagesPath": "C:\\Users\\amari\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\amari\\OneDrive\\Documents\\TrabajoD\\Login_Fb\\Domain\\obj\\",
+      "projectPath": "C:\\Users\\dmant\\OneDrive\\Documentos\\proyectCshap\\ProyectJexpo\\Login_Fb\\Domain\\Domain.csproj",
+      "packagesPath": "C:\\Users\\dmant\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\dmant\\OneDrive\\Documentos\\proyectCshap\\ProyectJexpo\\Login_Fb\\Domain\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\amari\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\dmant\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
@@ -922,7 +922,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.204/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",

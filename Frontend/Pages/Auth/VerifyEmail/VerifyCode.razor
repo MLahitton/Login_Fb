@@ -1,0 +1,83 @@
+@page "/verify-code"
+
+@using Frontend.Models.Auth
+@using Frontend.Services.Auth
+
+@inject NavigationManager Navigation
+@inject AuthApiService AuthService
+
+<div class="verify-container">
+
+    <div class="verify-card">
+
+        <div class="icon-circle">
+            ✉️
+        </div>
+
+        <h2>Confirma tu correo</h2>
+
+        <p>
+            Hemos enviado un código de verificación a
+        </p>
+
+        <strong>@email</strong>
+
+        <EditForm Model="verifyModel" OnValidSubmit="HandleVerify">
+
+            <DataAnnotationsValidator />
+
+            <div class="code-container">
+
+                <InputText class="code-input"
+                            maxlength="6"
+                            @bind-Value="verifyModel.Code" />
+
+            </div>
+
+            <button class="confirm-button" type="submit">
+                Confirmar código
+            </button>
+
+        </EditForm>
+        <p style="margin-top:15px;">
+            <a href="/register">Volver</a>
+        </p>
+
+    </div>
+
+</div>
+
+@code {
+
+    VerifyCodeRequest verifyModel = new();
+
+    string? email;
+
+    protected override void OnInitialized()
+    {
+        var uri = new Uri(Navigation.Uri);
+
+        string query = uri.Query;
+
+        if (query.Contains("email="))
+        {
+            email = query.Split("email=")[1];
+        }
+
+        verifyModel.Email = email ?? "";
+    }
+
+    async Task HandleVerify()
+    {
+        try
+        {
+            await AuthService.VerifyCode(verifyModel);
+
+            Console.WriteLine("Correo confirmado");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+}

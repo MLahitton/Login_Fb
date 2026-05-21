@@ -18,9 +18,49 @@ namespace Frontend.Services.Auth
 
         public async Task Register(RegisterRequest request)
         {
-            await _http.PostAsJsonAsync(
+            /*var response = await _http.PostAsJsonAsync(
                 "api/auth/register",
                 request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(error);
+            }*/
+            await Task.Delay(1000);
+            Console.WriteLine("Registro simulado");
+        }
+        public async Task Login(LoginRequest request)
+        {
+            var response = await _http.PostAsJsonAsync(
+                "api/auth/login",
+                request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(error);
+            }
+        }
+        public async Task VerifyCode(VerifyCodeRequest request)
+        {
+            // CUANDO YA EXISTA EL BACKEND
+            /*
+            var response = await _http.PostAsJsonAsync(
+                "api/auth/verify-code",
+                request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(error);
+            }
+            */
+
+            // SIMULACIÓN TEMPORAL
+            await Task.Delay(1000);
+
+            Console.WriteLine($"Código confirmado: {request.Code}");
         }
     }
 }

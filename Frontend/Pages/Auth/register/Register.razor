@@ -3,6 +3,7 @@
 
 @page "/register"
 @inject AuthApiService AuthService
+@inject NavigationManager Navigation
 <div class="register-container">
 
     <div class="left-panel">
@@ -30,7 +31,7 @@
                 <label>Nombre completo</label>
 
                 <InputText class="form-control"
-                           @bind-Value="registerModel.Name" />
+                            @bind-Value="registerModel.Name" />
 
                 <ValidationMessage For="@(() => registerModel.Name)" />
             </div>
@@ -39,7 +40,7 @@
                 <label>Email</label>
 
                 <InputText class="form-control"
-                           @bind-Value="registerModel.Email" />
+                            @bind-Value="registerModel.Email" />
 
                 <ValidationMessage For="@(() => registerModel.Email)" />
             </div>
@@ -48,8 +49,8 @@
                 <label>Password</label>
 
                 <InputText type="password"
-                           class="form-control"
-                           @bind-Value="registerModel.Password" />
+                            class="form-control"
+                            @bind-Value="registerModel.Password" />
 
                 <ValidationMessage For="@(() => registerModel.Password)" />
             </div>
@@ -59,6 +60,10 @@
             </button>
 
         </EditForm>
+        <p style="margin-top:15px;">
+            ¿Tu tienes una Cuenta?
+            <a href="/login">Iniciarse</a>
+        </p>
 
     </div>
 
@@ -70,11 +75,13 @@
 
     async Task HandleRegister()
     {
-         try
+        try
         {
             await AuthService.Register(registerModel);
 
             Console.WriteLine("Registro exitoso");
+            Navigation.NavigateTo("/verify-code");
+            //Navigation.NavigateTo($"/verify-code?email={registerModel.Email}");
         }
         catch(Exception ex)
         {
