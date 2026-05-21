@@ -75,5 +75,78 @@ namespace Frontend.Services.Auth
 
             Console.WriteLine("Contraseña actualizada");
         }
+         public async Task<DashboardStats> GetStats()
+        {
+            await Task.Delay(500);
+
+            return new DashboardStats
+            {
+                ActiveProjects = 24,
+                PendingTasks = 18,
+                ActiveClients = 36,
+                Revenue = 24680
+            };
+        }
+
+        public async Task<List<ActivityItem>> GetActivities()
+        {
+            await Task.Delay(500);
+
+            return new List<ActivityItem>
+            {
+                new ActivityItem
+                {
+                    Title = "Nuevo proyecto creado",
+                    Description = "Rediseño Web"
+                },
+
+                new ActivityItem
+                {
+                    Title = "Tarea completada",
+                    Description = "Investigación de mercado"
+                },
+
+                new ActivityItem
+                {
+                    Title = "Cliente actualizado",
+                    Description = "Central Café"
+                },
+
+                new ActivityItem
+                {
+                    Title = "Reporte generado",
+                    Description = "Reporte mensual"
+                }
+            };
+        }
+
+        public async Task<List<QuickAction>> GetQuickActions()
+        {
+            await Task.Delay(500);
+
+            return new List<QuickAction>
+            {
+                new QuickAction
+                {
+                    Name = "Nuevo proyecto"
+                },
+
+                new QuickAction
+                {
+                    Name = "Nueva tarea"
+                },
+
+                new QuickAction
+                {
+                    Name = "Agregar cliente"
+                },
+
+                new QuickAction
+                {
+                    Name = "Generar reporte"
+                }
+            };
+       
+        }    
     }
 }

@@ -45,6 +45,11 @@
 
                 <ValidationMessage For="@(() => loginModel.Password)" />
             </div>
+            <p class="forgot-password">
+                <a href="/forgot-password">
+                    ¿Olvidaste tu contraseña?
+                </a>
+            </p>
 
             <button class="register-button" type="submit">
                 Iniciar sesión
@@ -74,7 +79,7 @@
             Console.WriteLine("Login exitoso");
 
             // Redirigir después de login
-            Nav.NavigateTo("/");
+            Nav.NavigateTo("/dashboard");
         }
         catch (Exception ex)
         {

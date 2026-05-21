@@ -110,6 +110,23 @@ a:hover {
     font-size: 12px;
 }
 
+.forgot-password{
+    text-align:right;
+    margin-top:-10px;
+    margin-bottom:20px;
+}
+
+.forgot-password a{
+    color:#6c63ff;
+    font-size:14px;
+    text-decoration:none;
+    font-weight:500;
+}
+
+.forgot-password a:hover{
+    text-decoration:underline;
+}
+
 /* Responsive */
 @media (max-width: 900px) {
     .register-container {
