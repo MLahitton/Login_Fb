@@ -8,26 +8,26 @@
 <div class="register-container">
     <div class="left-panel">
         <img src="/img/candadito.png" class="illustration" />
-        <h3>Tu seguridad es nuestra prioridad</h3>
+        <h3>Explora lo que mas te gusta</h3>
         <p>Usamos cifrado en todas tus conexiones.</p>
     </div>
 
     <div class="right-panel">
-        <h1>Bienvenido de vuelta</h1>
+        <h1>Bienvenido de nuevo</h1>
         <p>Ingresa para continuar a tu cuenta.</p>
 
         <EditForm Model="model" OnValidSubmit="HandleLogin">
             <DataAnnotationsValidator />
 
             <div class="form-group">
-                <label>Correo electronico</label>
-                <InputText class="form-control" @bind-Value="model.Email" />
+                
+                <InputText class="form-control" placeholder="Correo Electronico" aria-lable="Correo Electronico" @bind-Value="model.Email" />
                 <ValidationMessage For="@(() => model.Email)" />
             </div>
 
             <div class="form-group">
-                <label>Contrasena</label>
-                <InputText type="password" class="form-control" @bind-Value="model.Password" />
+                
+                <InputText type="password" class="form-control" placeholder="Contraseña" @bind-Value="model.Password" />
                 <ValidationMessage For="@(() => model.Password)" />
             </div>
 
@@ -46,8 +46,7 @@
         }
 
         <p style="margin-top:15px;">
-            No tienes una cuenta?
-            <a href="/register">Registrate</a>
+            <a class="create-acc-btn" href="/register">Crea una nueva cuenta</a>
         </p>
     </div>
 </div>
