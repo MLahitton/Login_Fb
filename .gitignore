@@ -1,0 +1,12 @@
+# Carpetas de compilación
+bin/
+obj/
+
+# Archivos de Visual Studio
+.vs/
+
+# Otros recomendados
+*.user
+*.suo
+*.cache
+*.log
