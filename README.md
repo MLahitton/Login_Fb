@@ -950,3 +950,4 @@ Si seguiste toda la guia, debes tener un proyecto funcional en el que:
 - Puede subir foto de perfil y portada.
 - Las imagenes se mantienen al volver a entrar y cambian por cuenta.
 
+
