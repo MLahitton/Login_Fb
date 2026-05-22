@@ -2,10 +2,13 @@ using System.Text;
 using Application.DependencyInjection;
 using Infrastructure.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
+var apiWebRootPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
+Directory.CreateDirectory(apiWebRootPath);
 
 // ======================================================
 // 1. Controllers
@@ -146,11 +149,18 @@ if (app.Environment.IsDevelopment())
 // ======================================================
 // 10. HTTPS
 // ======================================================
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 // ======================================================
 // 11. CORS middleware
 // ======================================================
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(apiWebRootPath)
+});
 app.UseCors("FrontendPolicy");
 
 // ======================================================

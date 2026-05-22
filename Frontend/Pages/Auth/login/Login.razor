@@ -58,16 +58,26 @@
 
     private async Task HandleLogin()
     {
-        isLoading = true;
-        statusMessage = string.Empty;
-
-        var response = await AuthService.Login(model);
-        statusMessage = response.Message;
-        isLoading = false;
-
-        if (response.Success)
+        try
         {
-            Navigation.NavigateTo("/dashboard");
+            isLoading = true;
+            statusMessage = string.Empty;
+
+            var response = await AuthService.Login(model);
+            statusMessage = response.Message;
+
+            if (response.Success)
+            {
+                Navigation.NavigateTo("/dashboard");
+            }
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Error al iniciar sesion: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
         }
     }
 }

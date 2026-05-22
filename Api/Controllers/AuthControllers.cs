@@ -10,11 +10,23 @@ namespace Api.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly IAuthService _authService;
+    private const long MaxImageSizeBytes = 5 * 1024 * 1024;
 
-    public AuthController(IAuthService authService)
+    private static readonly HashSet<string> AllowedImageExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".webp"
+    };
+
+    private readonly IAuthService _authService;
+    private readonly IWebHostEnvironment _environment;
+
+    public AuthController(IAuthService authService, IWebHostEnvironment environment)
     {
         _authService = authService;
+        _environment = environment;
     }
 
     [HttpPost("register")]
@@ -82,15 +94,114 @@ public class AuthController : ControllerBase
 
         if (string.IsNullOrWhiteSpace(userId))
         {
-            return Unauthorized(ApiResponse<string>.Fail("Token inválido."));
+            return Unauthorized(ApiResponse<string>.Fail("Token invalido."));
         }
 
         var response = await _authService.GetCurrentUserAsync(userId);
         return ToActionResult(response);
     }
 
+    [Authorize]
+    [HttpGet("profile")]
+    public async Task<IActionResult> GetProfile()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Unauthorized(ApiResponse<string>.Fail("Token invalido."));
+        }
+
+        var response = await _authService.GetProfileAsync(userId);
+        return ToActionResult(response);
+    }
+
+    [Authorize]
+    [HttpPut("profile")]
+    public async Task<IActionResult> UpdateProfile(UpdateProfileRequest request)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Unauthorized(ApiResponse<string>.Fail("Token invalido."));
+        }
+
+        var response = await _authService.UpdateProfileAsync(userId, request);
+        return ToActionResult(response);
+    }
+
+    [Authorize]
+    [HttpPost("profile/photo")]
+    public async Task<IActionResult> UploadProfilePhoto([FromForm] IFormFile? file)
+    {
+        return await UploadImageAsync(file, "profile-photo", isProfilePhoto: true);
+    }
+
+    [Authorize]
+    [HttpPost("profile/cover")]
+    public async Task<IActionResult> UploadCoverPhoto([FromForm] IFormFile? file)
+    {
+        return await UploadImageAsync(file, "cover-photo", isProfilePhoto: false);
+    }
+
     private IActionResult ToActionResult<T>(ApiResponse<T> response)
     {
         return response.Success ? Ok(response) : BadRequest(response);
+    }
+
+    private async Task<IActionResult> UploadImageAsync(IFormFile? file, string prefix, bool isProfilePhoto)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Unauthorized(ApiResponse<string>.Fail("Token invalido."));
+        }
+
+        if (file is null || file.Length == 0)
+        {
+            return BadRequest(ApiResponse<string>.Fail("Debes seleccionar una imagen."));
+        }
+
+        if (file.Length > MaxImageSizeBytes)
+        {
+            return BadRequest(ApiResponse<string>.Fail("La imagen supera el maximo de 5MB."));
+        }
+
+        if (string.IsNullOrWhiteSpace(file.ContentType) ||
+            !file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+        {
+            return BadRequest(ApiResponse<string>.Fail("Solo se permiten archivos de imagen."));
+        }
+
+        var extension = Path.GetExtension(file.FileName);
+        if (string.IsNullOrWhiteSpace(extension) || !AllowedImageExtensions.Contains(extension))
+        {
+            return BadRequest(ApiResponse<string>.Fail("Formato no permitido. Usa JPG, PNG o WEBP."));
+        }
+
+        var webRootPath = Path.Combine(_environment.ContentRootPath, "wwwroot");
+        Directory.CreateDirectory(webRootPath);
+
+        var userFolderRelative = Path.Combine("uploads", userId);
+        var userFolderAbsolute = Path.Combine(webRootPath, userFolderRelative);
+        Directory.CreateDirectory(userFolderAbsolute);
+
+        var safeFileName = $"{prefix}_{DateTime.UtcNow:yyyyMMddHHmmss}_{Guid.NewGuid():N}{extension.ToLowerInvariant()}";
+        var absoluteFilePath = Path.Combine(userFolderAbsolute, safeFileName);
+
+        await using (var stream = System.IO.File.Create(absoluteFilePath))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        var relativeUrl = $"/{userFolderRelative.Replace("\\", "/")}/{safeFileName}";
+
+        var response = isProfilePhoto
+            ? await _authService.UpdateProfileImagesAsync(userId, relativeUrl, null)
+            : await _authService.UpdateProfileImagesAsync(userId, null, relativeUrl);
+
+        return ToActionResult(response);
     }
 }

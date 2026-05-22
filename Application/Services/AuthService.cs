@@ -71,7 +71,7 @@ public class AuthService : IAuthService
 
         if (user is null)
         {
-            return ApiResponse<string>.Fail("Código inválido o cuenta no encontrada.");
+            return ApiResponse<string>.Fail("Codigo invalido o cuenta no encontrada.");
         }
 
         if (user.EmailConfirmed)
@@ -86,17 +86,17 @@ public class AuthService : IAuthService
 
         if (record is null)
         {
-            return ApiResponse<string>.Fail("Código inválido o vencido.");
+            return ApiResponse<string>.Fail("Codigo invalido o vencido.");
         }
 
         if (record.ExpiresAtUtc < DateTime.UtcNow)
         {
-            return ApiResponse<string>.Fail("El código expiró. Solicita uno nuevo.");
+            return ApiResponse<string>.Fail("El codigo expiro. Solicita uno nuevo.");
         }
 
         if (record.Attempts >= MaxCodeAttempts)
         {
-            return ApiResponse<string>.Fail("Demasiados intentos. Solicita un nuevo código.");
+            return ApiResponse<string>.Fail("Demasiados intentos. Solicita un nuevo codigo.");
         }
 
         var expectedHash = HashCode(request.Code, user.Id, "email-confirmation");
@@ -104,7 +104,7 @@ public class AuthService : IAuthService
         {
             record.Attempts++;
             await _context.SaveChangesAsync();
-            return ApiResponse<string>.Fail("Código inválido.");
+            return ApiResponse<string>.Fail("Codigo invalido.");
         }
 
         user.EmailConfirmed = true;
@@ -117,7 +117,7 @@ public class AuthService : IAuthService
         record.UsedAtUtc = DateTime.UtcNow;
         await _context.SaveChangesAsync();
 
-        return ApiResponse<string>.Ok(string.Empty, "Correo confirmado correctamente. Ya puedes iniciar sesión.");
+        return ApiResponse<string>.Ok(string.Empty, "Correo confirmado correctamente. Ya puedes iniciar sesion.");
     }
 
     public async Task<ApiResponse<string>> ResendEmailConfirmationAsync(ResendEmailConfirmationRequest request)
@@ -129,7 +129,7 @@ public class AuthService : IAuthService
         {
             return ApiResponse<string>.Ok(
                 string.Empty,
-                "Si la cuenta existe y no está confirmada, se enviará un nuevo código.");
+                "Si la cuenta existe y no esta confirmada, se enviara un nuevo codigo.");
         }
 
         var code = GenerateSixDigitCode();
@@ -138,7 +138,7 @@ public class AuthService : IAuthService
 
         return ApiResponse<string>.Ok(
             string.Empty,
-            "Si la cuenta existe y no está confirmada, se enviará un nuevo código.");
+            "Si la cuenta existe y no esta confirmada, se enviara un nuevo codigo.");
     }
 
     public async Task<ApiResponse<AuthResponse>> LoginAsync(LoginRequest request)
@@ -148,24 +148,24 @@ public class AuthService : IAuthService
 
         if (user is null)
         {
-            return ApiResponse<AuthResponse>.Fail("Credenciales inválidas.");
+            return ApiResponse<AuthResponse>.Fail("Credenciales invalidas.");
         }
 
         if (!user.EmailConfirmed)
         {
-            return ApiResponse<AuthResponse>.Fail("Debes confirmar tu correo antes de iniciar sesión.");
+            return ApiResponse<AuthResponse>.Fail("Debes confirmar tu correo antes de iniciar sesion.");
         }
 
         if (await _userManager.IsLockedOutAsync(user))
         {
-            return ApiResponse<AuthResponse>.Fail("La cuenta está bloqueada temporalmente por intentos fallidos.");
+            return ApiResponse<AuthResponse>.Fail("La cuenta esta bloqueada temporalmente por intentos fallidos.");
         }
 
         var passwordIsValid = await _userManager.CheckPasswordAsync(user, request.Password);
         if (!passwordIsValid)
         {
             await _userManager.AccessFailedAsync(user);
-            return ApiResponse<AuthResponse>.Fail("Credenciales inválidas.");
+            return ApiResponse<AuthResponse>.Fail("Credenciales invalidas.");
         }
 
         await _userManager.ResetAccessFailedCountAsync(user);
@@ -189,7 +189,7 @@ public class AuthService : IAuthService
 
     public async Task<ApiResponse<string>> ForgotPasswordAsync(ForgotPasswordRequest request)
     {
-        var genericMessage = "Si el correo existe y está confirmado, se enviará un código de recuperación.";
+        var genericMessage = "Si el correo existe y esta confirmado, se enviara un codigo de recuperacion.";
         var email = NormalizeEmail(request.Email);
         var user = await _userManager.FindByEmailAsync(email);
 
@@ -212,7 +212,7 @@ public class AuthService : IAuthService
 
         if (user is null)
         {
-            return ApiResponse<string>.Fail("Código inválido o usuario no encontrado.");
+            return ApiResponse<string>.Fail("Codigo invalido o usuario no encontrado.");
         }
 
         var record = await _context.PasswordResetCodes
@@ -222,17 +222,17 @@ public class AuthService : IAuthService
 
         if (record is null)
         {
-            return ApiResponse<string>.Fail("Código inválido o vencido.");
+            return ApiResponse<string>.Fail("Codigo invalido o vencido.");
         }
 
         if (record.ExpiresAtUtc < DateTime.UtcNow)
         {
-            return ApiResponse<string>.Fail("El código expiró. Solicita uno nuevo.");
+            return ApiResponse<string>.Fail("El codigo expiro. Solicita uno nuevo.");
         }
 
         if (record.Attempts >= MaxCodeAttempts)
         {
-            return ApiResponse<string>.Fail("Demasiados intentos. Solicita un nuevo código.");
+            return ApiResponse<string>.Fail("Demasiados intentos. Solicita un nuevo codigo.");
         }
 
         var expectedHash = HashCode(request.Code, user.Id, "password-reset");
@@ -240,7 +240,7 @@ public class AuthService : IAuthService
         {
             record.Attempts++;
             await _context.SaveChangesAsync();
-            return ApiResponse<string>.Fail("Código inválido.");
+            return ApiResponse<string>.Fail("Codigo invalido.");
         }
 
         var identityResetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -264,7 +264,7 @@ public class AuthService : IAuthService
 
         await _context.SaveChangesAsync();
 
-        return ApiResponse<string>.Ok(string.Empty, "Contraseña actualizada correctamente. Inicia sesión con la nueva contraseña.");
+        return ApiResponse<string>.Ok(string.Empty, "Contrasena actualizada correctamente. Inicia sesion con la nueva contrasena.");
     }
 
     public async Task<ApiResponse<AuthResponse>> RefreshTokenAsync(RefreshTokenRequest request)
@@ -277,12 +277,12 @@ public class AuthService : IAuthService
 
         if (storedToken is null || !storedToken.IsActive)
         {
-            return ApiResponse<AuthResponse>.Fail("Refresh token inválido o expirado.");
+            return ApiResponse<AuthResponse>.Fail("Refresh token invalido o expirado.");
         }
 
         if (!storedToken.User.EmailConfirmed)
         {
-            return ApiResponse<AuthResponse>.Fail("La cuenta no está confirmada.");
+            return ApiResponse<AuthResponse>.Fail("La cuenta no esta confirmada.");
         }
 
         var newRefreshToken = _jwtService.GenerateRefreshToken();
@@ -318,7 +318,7 @@ public class AuthService : IAuthService
             await _context.SaveChangesAsync();
         }
 
-        return ApiResponse<string>.Ok(string.Empty, "Sesión cerrada correctamente.");
+        return ApiResponse<string>.Ok(string.Empty, "Sesion cerrada correctamente.");
     }
 
     public async Task<ApiResponse<UserResponse>> GetCurrentUserAsync(string userId)
@@ -331,6 +331,74 @@ public class AuthService : IAuthService
         }
 
         return ApiResponse<UserResponse>.Ok(UserResponse.FromUser(user), "Usuario autenticado.");
+    }
+
+    public async Task<ApiResponse<ProfileResponse>> GetProfileAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user is null)
+        {
+            return ApiResponse<ProfileResponse>.Fail("Usuario no encontrado.");
+        }
+
+        return ApiResponse<ProfileResponse>.Ok(ProfileResponse.FromUser(user), "Perfil cargado.");
+    }
+
+    public async Task<ApiResponse<ProfileResponse>> UpdateProfileAsync(string userId, UpdateProfileRequest request)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user is null)
+        {
+            return ApiResponse<ProfileResponse>.Fail("Usuario no encontrado.");
+        }
+
+        user.FullName = request.FullName.Trim();
+        user.Bio = (request.Bio ?? string.Empty).Trim();
+        user.City = (request.City ?? string.Empty).Trim();
+        user.StatusMessage = string.IsNullOrWhiteSpace(request.StatusMessage)
+            ? "Activo"
+            : request.StatusMessage.Trim();
+
+        var updateResult = await _userManager.UpdateAsync(user);
+        if (!updateResult.Succeeded)
+        {
+            return ApiResponse<ProfileResponse>.Fail(FormatIdentityErrors(updateResult));
+        }
+
+        return ApiResponse<ProfileResponse>.Ok(ProfileResponse.FromUser(user), "Perfil actualizado.");
+    }
+
+    public async Task<ApiResponse<ProfileResponse>> UpdateProfileImagesAsync(
+        string userId,
+        string? profilePhotoUrl,
+        string? coverPhotoUrl)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user is null)
+        {
+            return ApiResponse<ProfileResponse>.Fail("Usuario no encontrado.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(profilePhotoUrl))
+        {
+            user.ProfilePhotoUrl = profilePhotoUrl;
+        }
+
+        if (!string.IsNullOrWhiteSpace(coverPhotoUrl))
+        {
+            user.CoverPhotoUrl = coverPhotoUrl;
+        }
+
+        var updateResult = await _userManager.UpdateAsync(user);
+        if (!updateResult.Succeeded)
+        {
+            return ApiResponse<ProfileResponse>.Fail(FormatIdentityErrors(updateResult));
+        }
+
+        return ApiResponse<ProfileResponse>.Ok(ProfileResponse.FromUser(user), "Imagenes de perfil actualizadas.");
     }
 
     private async Task<AuthResponse> BuildAuthResponseAsync(ApplicationUser user, string refreshToken)

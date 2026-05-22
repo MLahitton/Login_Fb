@@ -21,4 +21,13 @@ public interface IAuthService
     Task<ApiResponse<string>> LogoutAsync(LogoutRequest request);
 
     Task<ApiResponse<UserResponse>> GetCurrentUserAsync(string userId);
+
+    Task<ApiResponse<ProfileResponse>> GetProfileAsync(string userId);
+
+    Task<ApiResponse<ProfileResponse>> UpdateProfileAsync(string userId, UpdateProfileRequest request);
+
+    Task<ApiResponse<ProfileResponse>> UpdateProfileImagesAsync(
+        string userId,
+        string? profilePhotoUrl,
+        string? coverPhotoUrl);
 }

@@ -1,13 +1,11 @@
 @page "/dashboard"
 
-@using System.IO
 @using Frontend.Models.Auth
 @using Frontend.Services.Auth
 @using Microsoft.AspNetCore.Components.Forms
 
 @inject AuthApiService AuthService
 @inject NavigationManager Navigation
-@inject IJSRuntime JS
 
 <div class="profile-page">
     @if (isLoading)
@@ -37,7 +35,7 @@
 
             <div class="profile-main">
                 <h1>@displayName</h1>
-                <p>@(currentUser?.Email ?? "correo@ejemplo.com")</p>
+                <p>@(currentProfile?.Email ?? "correo@ejemplo.com")</p>
                 @if (!string.IsNullOrWhiteSpace(bio))
                 {
                     <p class="bio-line">@bio</p>
@@ -72,7 +70,7 @@
                 <h3>Detalles</h3>
                 <p>Ciudad: @city</p>
                 <p>Estado: @userStatus</p>
-                <p>Email confirmado: @(currentUser?.EmailConfirmed == true ? "Si" : "No")</p>
+                <p>Email confirmado: @(currentProfile?.EmailConfirmed == true ? "Si" : "No")</p>
             </aside>
 
             <main class="right-card">
@@ -96,7 +94,7 @@
         <div class="edit-modal" @onclick:stopPropagation="true">
             <div class="edit-modal-header">
                 <h3>Editar perfil</h3>
-                <button class="modal-close-btn" @onclick="CloseEditProfileModal">×</button>
+                <button class="modal-close-btn" @onclick="CloseEditProfileModal">&times;</button>
             </div>
 
             <div class="edit-modal-body">
@@ -130,7 +128,7 @@
 }
 
 @code {
-    private UserResponse? currentUser;
+    private ProfileResponse? currentProfile;
     private string statusMessage = string.Empty;
     private bool isLoading = true;
 
@@ -139,7 +137,7 @@
 
     private string displayName = "Usuario";
     private string bio = string.Empty;
-    private string city = "Bucaramanga";
+    private string city = "No definida";
     private string userStatus = "Activo";
 
     private bool showEditProfileModal;
@@ -149,37 +147,62 @@
     private string editCity = string.Empty;
     private string editUserStatus = string.Empty;
 
-    private const string CoverStorageKey = "dashboard.cover.preview";
-    private const string ProfileStorageKey = "dashboard.profile.preview";
-
-    private const string DisplayNameStorageKey = "dashboard.profile.displayName";
-    private const string BioStorageKey = "dashboard.profile.bio";
-    private const string CityStorageKey = "dashboard.profile.city";
-    private const string UserStatusStorageKey = "dashboard.profile.status";
-
     protected override async Task OnInitializedAsync()
     {
-        if (!await AuthService.IsAuthenticated())
+        try
         {
+            if (!await AuthService.IsAuthenticated())
+            {
+                Navigation.NavigateTo("/login");
+                return;
+            }
+
+            var response = await AuthService.GetProfile();
+
+            if (!response.Success || response.Data is null)
+            {
+                statusMessage = string.IsNullOrWhiteSpace(response.Message)
+                    ? "No se pudo cargar el perfil."
+                    : response.Message;
+                Navigation.NavigateTo("/login");
+                return;
+            }
+
+            ApplyProfileData(response.Data);
+            statusMessage = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Error cargando perfil: {ex.Message}";
             Navigation.NavigateTo("/login");
-            return;
         }
-
-        var response = await AuthService.GetMe();
-        isLoading = false;
-
-        if (response.Success)
+        finally
         {
-            currentUser = response.Data;
-            displayName = currentUser?.FullName ?? "Usuario";
+            isLoading = false;
+        }
+    }
 
-            await LoadPreviewImagesFromStorage();
-            await LoadProfileDataFromStorage();
-            return;
+    private void ApplyProfileData(ProfileResponse profile)
+    {
+        currentProfile = profile;
+
+        displayName = string.IsNullOrWhiteSpace(profile.FullName)
+            ? "Usuario"
+            : profile.FullName;
+
+        bio = profile.Bio ?? string.Empty;
+        city = string.IsNullOrWhiteSpace(profile.City) ? "No definida" : profile.City;
+        userStatus = string.IsNullOrWhiteSpace(profile.StatusMessage) ? "Activo" : profile.StatusMessage;
+
+        if (!string.IsNullOrWhiteSpace(profile.CoverPhotoUrl))
+        {
+            coverPreviewUrl = AuthService.ResolveAssetUrl(profile.CoverPhotoUrl);
         }
 
-        statusMessage = response.Message;
-        Navigation.NavigateTo("/login");
+        if (!string.IsNullOrWhiteSpace(profile.ProfilePhotoUrl))
+        {
+            profilePreviewUrl = AuthService.ResolveAssetUrl(profile.ProfilePhotoUrl);
+        }
     }
 
     private async Task HandleLogout()
@@ -188,55 +211,11 @@
         Navigation.NavigateTo("/login");
     }
 
-    private async Task LoadPreviewImagesFromStorage()
-    {
-        var savedCover = await JS.InvokeAsync<string?>("localStorage.getItem", CoverStorageKey);
-        var savedProfile = await JS.InvokeAsync<string?>("localStorage.getItem", ProfileStorageKey);
-
-        if (!string.IsNullOrWhiteSpace(savedCover))
-        {
-            coverPreviewUrl = savedCover;
-        }
-
-        if (!string.IsNullOrWhiteSpace(savedProfile))
-        {
-            profilePreviewUrl = savedProfile;
-        }
-    }
-
-    private async Task LoadProfileDataFromStorage()
-    {
-        var savedDisplayName = await JS.InvokeAsync<string?>("localStorage.getItem", DisplayNameStorageKey);
-        var savedBio = await JS.InvokeAsync<string?>("localStorage.getItem", BioStorageKey);
-        var savedCity = await JS.InvokeAsync<string?>("localStorage.getItem", CityStorageKey);
-        var savedStatus = await JS.InvokeAsync<string?>("localStorage.getItem", UserStatusStorageKey);
-
-        if (!string.IsNullOrWhiteSpace(savedDisplayName))
-        {
-            displayName = savedDisplayName;
-        }
-
-        if (!string.IsNullOrWhiteSpace(savedBio))
-        {
-            bio = savedBio;
-        }
-
-        if (!string.IsNullOrWhiteSpace(savedCity))
-        {
-            city = savedCity;
-        }
-
-        if (!string.IsNullOrWhiteSpace(savedStatus))
-        {
-            userStatus = savedStatus;
-        }
-    }
-
     private void OpenEditProfileModal()
     {
         editDisplayName = displayName;
         editBio = bio;
-        editCity = city;
+        editCity = city == "No definida" ? string.Empty : city;
         editUserStatus = userStatus;
 
         showEditProfileModal = true;
@@ -249,18 +228,27 @@
 
     private async Task SaveProfileChanges()
     {
-        displayName = string.IsNullOrWhiteSpace(editDisplayName) ? "Usuario" : editDisplayName.Trim();
-        bio = editBio?.Trim() ?? string.Empty;
-        city = string.IsNullOrWhiteSpace(editCity) ? "No definida" : editCity.Trim();
-        userStatus = string.IsNullOrWhiteSpace(editUserStatus) ? "Activo" : editUserStatus.Trim();
+        var request = new UpdateProfileRequest
+        {
+            FullName = string.IsNullOrWhiteSpace(editDisplayName) ? "Usuario" : editDisplayName.Trim(),
+            Bio = editBio?.Trim() ?? string.Empty,
+            City = string.IsNullOrWhiteSpace(editCity) ? string.Empty : editCity.Trim(),
+            StatusMessage = string.IsNullOrWhiteSpace(editUserStatus) ? "Activo" : editUserStatus.Trim()
+        };
 
-        await JS.InvokeVoidAsync("localStorage.setItem", DisplayNameStorageKey, displayName);
-        await JS.InvokeVoidAsync("localStorage.setItem", BioStorageKey, bio);
-        await JS.InvokeVoidAsync("localStorage.setItem", CityStorageKey, city);
-        await JS.InvokeVoidAsync("localStorage.setItem", UserStatusStorageKey, userStatus);
+        var response = await AuthService.UpdateProfile(request);
 
+        if (!response.Success || response.Data is null)
+        {
+            statusMessage = string.IsNullOrWhiteSpace(response.Message)
+                ? "No se pudo actualizar el perfil."
+                : response.Message;
+            return;
+        }
+
+        ApplyProfileData(response.Data);
         showEditProfileModal = false;
-        statusMessage = "Perfil actualizado (modo local).";
+        statusMessage = "Perfil actualizado.";
     }
 
     private async Task OnCoverChanged(InputFileChangeEventArgs e)
@@ -273,20 +261,21 @@
 
         try
         {
-            var maxBytes = 5 * 1024 * 1024;
-            await using var stream = file.OpenReadStream(maxBytes);
-            using var ms = new MemoryStream();
-            await stream.CopyToAsync(ms);
+            var response = await AuthService.UploadCoverPhoto(file);
+            if (!response.Success || response.Data is null)
+            {
+                statusMessage = string.IsNullOrWhiteSpace(response.Message)
+                    ? "No se pudo subir la portada."
+                    : response.Message;
+                return;
+            }
 
-            var base64 = Convert.ToBase64String(ms.ToArray());
-            coverPreviewUrl = $"data:{file.ContentType};base64,{base64}";
-            await JS.InvokeVoidAsync("localStorage.setItem", CoverStorageKey, coverPreviewUrl);
-
-            statusMessage = string.Empty;
+            ApplyProfileData(response.Data);
+            statusMessage = "Portada actualizada.";
         }
         catch
         {
-            statusMessage = "No se pudo cargar la portada. Revisa el tamano del archivo.";
+            statusMessage = "No se pudo cargar la portada. Revisa el formato o tamano del archivo.";
         }
     }
 
@@ -300,20 +289,21 @@
 
         try
         {
-            var maxBytes = 5 * 1024 * 1024;
-            await using var stream = file.OpenReadStream(maxBytes);
-            using var ms = new MemoryStream();
-            await stream.CopyToAsync(ms);
+            var response = await AuthService.UploadProfilePhoto(file);
+            if (!response.Success || response.Data is null)
+            {
+                statusMessage = string.IsNullOrWhiteSpace(response.Message)
+                    ? "No se pudo subir la foto de perfil."
+                    : response.Message;
+                return;
+            }
 
-            var base64 = Convert.ToBase64String(ms.ToArray());
-            profilePreviewUrl = $"data:{file.ContentType};base64,{base64}";
-            await JS.InvokeVoidAsync("localStorage.setItem", ProfileStorageKey, profilePreviewUrl);
-
-            statusMessage = string.Empty;
+            ApplyProfileData(response.Data);
+            statusMessage = "Foto de perfil actualizada.";
         }
         catch
         {
-            statusMessage = "No se pudo cargar la foto de perfil. Revisa el tamano del archivo.";
+            statusMessage = "No se pudo cargar la foto de perfil. Revisa el formato o tamano del archivo.";
         }
     }
 }
