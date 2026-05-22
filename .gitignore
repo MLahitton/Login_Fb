@@ -1,11 +1,6 @@
-# Compilación .NET
 bin/
 obj/
-
-# Visual Studio
 .vs/
-
-# Otros
 *.user
 *.suo
 *.log

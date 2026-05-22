@@ -1,0 +1,143 @@
+/* Contenedor general */
+.register-container {
+    display: flex;
+    height: 100vh;
+    background: #f5f6fa;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Panel izquierdo */
+.left-panel {
+    flex: 1;
+    background: linear-gradient(135deg, #6c63ff, #8a84ff);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    text-align: center;
+}
+
+.left-panel .illustration {
+    width: 220px;
+    margin-bottom: 20px;
+}
+
+.left-panel h3 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.left-panel p {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* Panel derecho */
+.right-panel {
+    flex: 1;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px;
+}
+
+/* Títulos */
+.right-panel h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.right-panel p {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+/* Formulario */
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* Inputs */
+.form-control {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.form-control:focus {
+    border-color: #6c63ff;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.2);
+}
+
+/* Botón */
+.register-button {
+    width: 100%;
+    padding: 12px;
+    background: #6c63ff;
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.register-button:hover {
+    background: #574fd6;
+}
+
+/* Links */
+a {
+    color: #6c63ff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Validaciones */
+.validation-message {
+    color: red;
+    font-size: 12px;
+}
+
+.forgot-password{
+    text-align:right;
+    margin-top:-10px;
+    margin-bottom:20px;
+}
+
+.forgot-password a{
+    color:#6c63ff;
+    font-size:14px;
+    text-decoration:none;
+    font-weight:500;
+}
+
+.forgot-password a:hover{
+    text-decoration:underline;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .register-container {
+        flex-direction: column;
+    }
+
+    .left-panel {
+        height: 250px;
+    }
+
+    .right-panel {
+        padding: 30px;
+    }
+}

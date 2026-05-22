@@ -1,0 +1,91 @@
+@using Frontend.Services.Auth
+@using Frontend.Models.Auth
+
+@page "/register"
+@inject AuthApiService AuthService
+@inject NavigationManager Navigation
+<div class="register-container">
+
+    <div class="left-panel">
+        <img src="/img/primari.png" class="illustration" />
+
+        <h3>Seguro y confiable</h3>
+
+        <p>
+            Protegemos tus datos con los más altos estándares.
+        </p>
+
+    </div>
+
+    <div class="right-panel">
+
+        <h1>Crea tu cuenta</h1>
+
+        <p>Empieza a gestionar todo en un solo lugar.</p>
+
+        <EditForm Model="registerModel" OnValidSubmit="HandleRegister">
+
+            <DataAnnotationsValidator />
+
+            <div class="form-group">
+                <label>Nombre completo</label>
+
+                <InputText class="form-control"
+                            @bind-Value="registerModel.Name" />
+
+                <ValidationMessage For="@(() => registerModel.Name)" />
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+
+                <InputText class="form-control"
+                            @bind-Value="registerModel.Email" />
+
+                <ValidationMessage For="@(() => registerModel.Email)" />
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+
+                <InputText type="password"
+                            class="form-control"
+                            @bind-Value="registerModel.Password" />
+
+                <ValidationMessage For="@(() => registerModel.Password)" />
+            </div>
+
+            <button class="register-button" type="submit">
+                Crear cuenta
+            </button>
+
+        </EditForm>
+        <p style="margin-top:15px;">
+            ¿Tu tienes una Cuenta?
+            <a href="/login">Iniciarse</a>
+        </p>
+
+    </div>
+
+</div>
+
+@code {
+
+    RegisterRequest registerModel = new();
+
+    async Task HandleRegister()
+    {
+        try
+        {
+            await AuthService.Register(registerModel);
+
+            Console.WriteLine("Registro exitoso");
+            Navigation.NavigateTo("/verify-code");
+            //Navigation.NavigateTo($"/verify-code?email={registerModel.Email}");
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+}
