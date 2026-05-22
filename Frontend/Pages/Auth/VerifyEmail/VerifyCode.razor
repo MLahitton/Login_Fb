@@ -7,77 +7,85 @@
 @inject AuthApiService AuthService
 
 <div class="verify-container">
-
     <div class="verify-card">
-
-        <div class="icon-circle">
-            ✉️
-        </div>
-
+        <div class="icon-circle">Codigo</div>
         <h2>Confirma tu correo</h2>
+        <p>Hemos enviado un codigo de verificacion a:</p>
+        <strong>@(string.IsNullOrWhiteSpace(model.Email) ? "tu correo" : model.Email)</strong>
 
-        <p>
-            Hemos enviado un código de verificación a
-        </p>
-
-        <strong>@email</strong>
-
-        <EditForm Model="verifyModel" OnValidSubmit="HandleVerify">
-
+        <EditForm Model="model" OnValidSubmit="HandleVerify">
             <DataAnnotationsValidator />
 
             <div class="code-container">
-
-                <InputText class="code-input"
-                            maxlength="6"
-                            @bind-Value="verifyModel.Code" />
-
+                <InputText class="code-input" maxlength="6" @bind-Value="model.Code" />
+                <ValidationMessage For="@(() => model.Code)" />
             </div>
 
-            <button class="confirm-button" type="submit">
-                Confirmar código
+            <button class="confirm-button" type="submit" disabled="@isLoading">
+                @(isLoading ? "Verificando..." : "Confirmar codigo")
             </button>
-
         </EditForm>
+
+        @if (!string.IsNullOrWhiteSpace(statusMessage))
+        {
+            <p style="margin-top: 15px;">@statusMessage</p>
+        }
+
         <p style="margin-top:15px;">
             <a href="/register">Volver</a>
         </p>
-
     </div>
-
 </div>
 
 @code {
-
-    VerifyCodeRequest verifyModel = new();
-
-    string? email;
+    private readonly VerifyCodeRequest model = new();
+    private string statusMessage = string.Empty;
+    private bool isLoading;
 
     protected override void OnInitialized()
     {
-        var uri = new Uri(Navigation.Uri);
-
-        string query = uri.Query;
-
-        if (query.Contains("email="))
-        {
-            email = query.Split("email=")[1];
-        }
-
-        verifyModel.Email = email ?? "";
+        var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
+        model.Email = ReadQueryValue(uri.Query, "email");
     }
 
-    async Task HandleVerify()
+    private async Task HandleVerify()
     {
-        try
-        {
-            await AuthService.VerifyCode(verifyModel);
+        isLoading = true;
+        statusMessage = string.Empty;
 
-            Console.WriteLine("Correo confirmado");
-        }
-        catch (Exception ex)
+        var response = await AuthService.VerifyCode(model);
+        statusMessage = response.Message;
+        isLoading = false;
+
+        if (response.Success)
         {
-            Console.WriteLine(ex.Message);
+            Navigation.NavigateTo("/login");
         }
+    }
+
+    private static string ReadQueryValue(string query, string key)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return string.Empty;
+        }
+
+        var parts = query.TrimStart('?').Split('&', StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (var part in parts)
+        {
+            var tokens = part.Split('=', 2);
+            if (tokens.Length != 2)
+            {
+                continue;
+            }
+
+            if (string.Equals(tokens[0], key, StringComparison.OrdinalIgnoreCase))
+            {
+                return Uri.UnescapeDataString(tokens[1]);
+            }
+        }
+
+        return string.Empty;
     }
 }

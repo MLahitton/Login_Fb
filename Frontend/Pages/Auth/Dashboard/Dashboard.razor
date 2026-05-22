@@ -1,233 +1,89 @@
 @page "/dashboard"
 
-@using Frontend.Models.Dashboard
+@using Frontend.Models.Auth
 @using Frontend.Services.Auth
 
 @inject AuthApiService AuthService
-
+@inject NavigationManager Navigation
 
 <div class="dashboard-container">
-
-    <!-- SIDEBAR -->
-
-    <div class="sidebar">
-
-        <div>
-
-            <div class="logo">
-
-                <img src="/img/primari.png" />
-
-                <h2>NEXO</h2>
-
-            </div>
-
-            <ul class="menu">
-
-                <li class="active">
-                    Dashboard
-                </li>
-
-                <li>
-                    Proyectos
-                </li>
-
-                <li>
-                    Tareas
-                </li>
-
-                <li>
-                    Clientes
-                </li>
-
-                <li>
-                    Reportes
-                </li>
-
-                <li>
-                    Configuración
-                </li>
-
-            </ul>
-
-        </div>
-
-        <button class="logout-button">
-            Cerrar sesión
-        </button>
-
-    </div>
-
-    <!-- MAIN -->
-
-    <div class="main-content">
-
-        <!-- TOPBAR -->
-
+    <div class="main-content" style="max-width: 900px; margin: 30px auto;">
         <div class="topbar">
-
             <div>
-
-                <h1>
-                    Dashboard
-                </h1>
-
-                <p>
-                    Bienvenido nuevamente 👋
-                </p>
-
+                <h1>Dashboard protegido</h1>
+                <p>Esta pagina consulta el endpoint /api/auth/me con JWT.</p>
             </div>
-
-            <div class="profile">
-
-                <img src="https://i.pravatar.cc/100" />
-
-                <div>
-
-                    <h4>
-                        Sergio Mendoza
-                    </h4>
-
-                    <span>
-                        Administrador
-                    </span>
-
-                </div>
-
-            </div>
-
         </div>
 
-        <!-- STATS -->
+        @if (isLoading)
+        {
+            <p>Cargando usuario autenticado...</p>
+        }
+        else if (!string.IsNullOrWhiteSpace(statusMessage))
+        {
+            <p>@statusMessage</p>
+        }
 
-        <div class="cards">
-
-            <div class="card">
-
-                <span>
-                    Proyectos Activos
-                </span>
-
-                <h2>
-                    @stats.ActiveProjects
-                </h2>
-
-            </div>
-
-            <div class="card">
-
-                <span>
-                    Tareas Pendientes
-                </span>
-
-                <h2>
-                    @stats.PendingTasks
-                </h2>
-
-            </div>
-
-            <div class="card">
-
-                <span>
-                    Clientes Activos
-                </span>
-
-                <h2>
-                    @stats.ActiveClients
-                </h2>
-
-            </div>
-
-            <div class="card">
-
-                <span>
-                    Ingresos
-                </span>
-
-                <h2>
-                    $@stats.Revenue
-                </h2>
-
-            </div>
-
-        </div>
-
-        <!-- CONTENT -->
-
-        <div class="content">
-
-            <!-- ACTIVITIES -->
-
-            <div class="activities">
-
-                <div class="section-title">
-
-                    <h3>
-                        Actividad reciente
-                    </h3>
-
+        @if (currentUser is not null)
+        {
+            <div class="cards" style="margin-top: 20px;">
+                <div class="card">
+                    <span>ID</span>
+                    <h2 style="font-size: 1rem;">@currentUser.Id</h2>
                 </div>
 
-                @foreach (var item in activities)
-                {
-                    <div class="activity-item">
-
-                        <h4>
-                            @item.Title
-                        </h4>
-
-                        <p>
-                            @item.Description
-                        </p>
-
-                    </div>
-                }
-
-            </div>
-
-            <!-- QUICK ACTIONS -->
-
-            <div class="actions">
-
-                <div class="section-title">
-
-                    <h3>
-                        Acciones rápidas
-                    </h3>
-
+                <div class="card">
+                    <span>Nombre</span>
+                    <h2 style="font-size: 1rem;">@currentUser.FullName</h2>
                 </div>
 
-                @foreach (var action in actions)
-                {
-                    <button class="action-button">
+                <div class="card">
+                    <span>Email</span>
+                    <h2 style="font-size: 1rem;">@currentUser.Email</h2>
+                </div>
 
-                        @action.Name
-
-                    </button>
-                }
-
+                <div class="card">
+                    <span>Confirmado</span>
+                    <h2 style="font-size: 1rem;">@(currentUser.EmailConfirmed ? "Si" : "No")</h2>
+                </div>
             </div>
 
-        </div>
-
+            <button class="logout-button" style="margin-top: 30px;" @onclick="HandleLogout">
+                Cerrar sesion
+            </button>
+        }
     </div>
-
 </div>
 
 @code {
-
-    DashboardStats stats = new();
-
-    List<ActivityItem> activities = new();
-
-    List<QuickAction> actions = new();
+    private UserResponse? currentUser;
+    private string statusMessage = string.Empty;
+    private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
-        stats = await AuthService.GetStats();
+        if (!await AuthService.IsAuthenticated())
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
 
-        activities = await AuthService.GetActivities();
+        var response = await AuthService.GetMe();
+        isLoading = false;
 
-        actions = await AuthService.GetQuickActions();
+        if (response.Success)
+        {
+            currentUser = response.Data;
+            return;
+        }
+
+        statusMessage = response.Message;
+        Navigation.NavigateTo("/login");
+    }
+
+    private async Task HandleLogout()
+    {
+        await AuthService.Logout();
+        Navigation.NavigateTo("/login");
     }
 }

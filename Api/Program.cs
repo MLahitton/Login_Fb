@@ -29,14 +29,25 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", policy =>
     {
-        policy.WithOrigins(
-                "https://localhost:5002",
-                "http://localhost:5002",
-                "https://localhost:7002",
-                "http://localhost:7002",
-                "https://localhost:7065",
-                "http://localhost:5065"
-            )
+        var frontendUrl = builder.Configuration["Frontend:Url"];
+        var allowedOrigins = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "https://localhost:5002",
+            "http://localhost:5002",
+            "https://localhost:7222",
+            "http://localhost:5126",
+            "https://localhost:7002",
+            "http://localhost:7002",
+            "https://localhost:7065",
+            "http://localhost:5065"
+        };
+
+        if (!string.IsNullOrWhiteSpace(frontendUrl))
+        {
+            allowedOrigins.Add(frontendUrl);
+        }
+
+        policy.WithOrigins(allowedOrigins.ToArray())
             .AllowAnyHeader()
             .AllowAnyMethod();
     });

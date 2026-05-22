@@ -1,152 +1,236 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Frontend.Models.Auth;
+using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
+using Frontend.Models.Auth;
+using Microsoft.JSInterop;
 
-namespace Frontend.Services.Auth
+namespace Frontend.Services.Auth;
+
+public class AuthApiService
 {
-    public class AuthApiService
+    private const string AccessTokenKey = "auth.access_token";
+    private const string RefreshTokenKey = "auth.refresh_token";
+
+    private static readonly JsonSerializerOptions JsonOptions = new()
     {
-        private readonly HttpClient _http;
+        PropertyNameCaseInsensitive = true
+    };
 
-        public AuthApiService(HttpClient http)
+    private readonly HttpClient _http;
+    private readonly IJSRuntime _js;
+
+    public AuthApiService(HttpClient http, IJSRuntime js)
+    {
+        _http = http;
+        _js = js;
+    }
+
+    public Task<ApiResponse<UserResponse>> Register(RegisterRequest request)
+    {
+        return PostAsync<UserResponse>("register", request);
+    }
+
+    public Task<ApiResponse<string>> VerifyCode(VerifyCodeRequest request)
+    {
+        return PostAsync<string>("confirm-email", request);
+    }
+
+    public async Task<ApiResponse<AuthResponse>> Login(LoginRequest request)
+    {
+        var response = await PostAsync<AuthResponse>("login", request);
+
+        if (response.Success && response.Data is not null)
         {
-            _http = http;
+            await SaveTokensAsync(response.Data.AccessToken, response.Data.RefreshToken);
         }
 
-        public async Task Register(RegisterRequest request)
-        {
-            /*var response = await _http.PostAsJsonAsync(
-                "api/auth/register",
-                request);
+        return response;
+    }
 
-            if (!response.IsSuccessStatusCode)
+    public Task<ApiResponse<string>> ForgotPassword(ForgotPasswordRequest request)
+    {
+        return PostAsync<string>("forgot-password", request);
+    }
+
+    public Task<ApiResponse<string>> ResetPassword(ResetPasswordRequest request)
+    {
+        return PostAsync<string>(
+            "reset-password",
+            new
             {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception(error);
-            }*/
-            await Task.Delay(1000);
-            Console.WriteLine("Registro simulado");
+                request.Email,
+                request.Code,
+                request.NewPassword
+            });
+    }
+
+    public Task<ApiResponse<UserResponse>> GetMe()
+    {
+        return GetAuthorizedAsync<UserResponse>("me");
+    }
+
+    public async Task<ApiResponse<string>> Logout()
+    {
+        var refreshToken = await GetRefreshTokenAsync();
+
+        if (string.IsNullOrWhiteSpace(refreshToken))
+        {
+            await ClearTokensAsync();
+            return new ApiResponse<string>
+            {
+                Success = true,
+                Message = "Sesion local cerrada."
+            };
         }
-        public async Task Login(LoginRequest request)
-        {
-            var response = await _http.PostAsJsonAsync(
-                "api/auth/login",
-                request);
 
-            if (!response.IsSuccessStatusCode)
+        var response = await PostAuthorizedAsync<string>(
+            "logout",
+            new LogoutRequest
             {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception(error);
+                RefreshToken = refreshToken
+            },
+            allowRefreshRetry: false);
+
+        await ClearTokensAsync();
+        return response;
+    }
+
+    public async Task<bool> IsAuthenticated()
+    {
+        var accessToken = await GetAccessTokenAsync();
+        if (!string.IsNullOrWhiteSpace(accessToken))
+        {
+            return true;
+        }
+
+        return await TryRefreshTokenAsync();
+    }
+
+    private Task<ApiResponse<T>> PostAsync<T>(string endpoint, object payload)
+    {
+        return SendAsync<T>(() => _http.PostAsJsonAsync(endpoint, payload));
+    }
+
+    private Task<ApiResponse<T>> GetAuthorizedAsync<T>(string endpoint)
+    {
+        return SendAuthorizedAsync<T>(() => _http.GetAsync(endpoint), allowRefreshRetry: true);
+    }
+
+    private Task<ApiResponse<T>> PostAuthorizedAsync<T>(string endpoint, object payload, bool allowRefreshRetry)
+    {
+        return SendAuthorizedAsync<T>(
+            () => _http.PostAsJsonAsync(endpoint, payload),
+            allowRefreshRetry);
+    }
+
+    private async Task<ApiResponse<T>> SendAuthorizedAsync<T>(
+        Func<Task<HttpResponseMessage>> requestFactory,
+        bool allowRefreshRetry)
+    {
+        await AttachAccessTokenAsync();
+
+        var response = await requestFactory();
+
+        if (allowRefreshRetry && response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            if (await TryRefreshTokenAsync())
+            {
+                await AttachAccessTokenAsync();
+                response = await requestFactory();
             }
         }
-        public async Task VerifyCode(VerifyCodeRequest request)
-        {
-            // CUANDO YA EXISTA EL BACKEND
-            /*
-            var response = await _http.PostAsJsonAsync(
-                "api/auth/verify-code",
-                request);
 
-            if (!response.IsSuccessStatusCode)
+        var result = await ReadApiResponseAsync<T>(response);
+
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            await ClearTokensAsync();
+        }
+
+        return result;
+    }
+
+    private async Task<ApiResponse<T>> SendAsync<T>(Func<Task<HttpResponseMessage>> requestFactory)
+    {
+        var response = await requestFactory();
+        return await ReadApiResponseAsync<T>(response);
+    }
+
+    private async Task<ApiResponse<T>> ReadApiResponseAsync<T>(HttpResponseMessage response)
+    {
+        var payload = await response.Content.ReadFromJsonAsync<ApiResponse<T>>(JsonOptions);
+
+        if (payload is not null)
+        {
+            return payload;
+        }
+
+        var raw = await response.Content.ReadAsStringAsync();
+
+        return new ApiResponse<T>
+        {
+            Success = response.IsSuccessStatusCode,
+            Message = string.IsNullOrWhiteSpace(raw)
+                ? $"Error HTTP {(int)response.StatusCode}."
+                : raw
+        };
+    }
+
+    private async Task<bool> TryRefreshTokenAsync()
+    {
+        var refreshToken = await GetRefreshTokenAsync();
+        if (string.IsNullOrWhiteSpace(refreshToken))
+        {
+            return false;
+        }
+
+        var response = await PostAsync<AuthResponse>(
+            "refresh-token",
+            new RefreshTokenRequest
             {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception(error);
-            }
-            */
+                RefreshToken = refreshToken
+            });
 
-            // SIMULACIÓN TEMPORAL
-            await Task.Delay(1000);
-
-            Console.WriteLine($"Código confirmado: {request.Code}");
-        }
-        public async Task ForgotPassword(ForgotPasswordRequest request)
+        if (!response.Success || response.Data is null)
         {
-            await Task.Delay(1000);
-
-            Console.WriteLine("Correo de recuperación enviado");
+            await ClearTokensAsync();
+            return false;
         }
 
-        public async Task ResetPassword(ResetPasswordRequest request)
-        {
-            await Task.Delay(1000);
+        await SaveTokensAsync(response.Data.AccessToken, response.Data.RefreshToken);
+        return true;
+    }
 
-            Console.WriteLine("Contraseña actualizada");
-        }
-         public async Task<DashboardStats> GetStats()
-        {
-            await Task.Delay(500);
+    private async Task AttachAccessTokenAsync()
+    {
+        var accessToken = await GetAccessTokenAsync();
 
-            return new DashboardStats
-            {
-                ActiveProjects = 24,
-                PendingTasks = 18,
-                ActiveClients = 36,
-                Revenue = 24680
-            };
-        }
+        _http.DefaultRequestHeaders.Authorization = string.IsNullOrWhiteSpace(accessToken)
+            ? null
+            : new AuthenticationHeaderValue("Bearer", accessToken);
+    }
 
-        public async Task<List<ActivityItem>> GetActivities()
-        {
-            await Task.Delay(500);
+    private async Task SaveTokensAsync(string accessToken, string refreshToken)
+    {
+        await _js.InvokeVoidAsync("localStorage.setItem", AccessTokenKey, accessToken);
+        await _js.InvokeVoidAsync("localStorage.setItem", RefreshTokenKey, refreshToken);
+    }
 
-            return new List<ActivityItem>
-            {
-                new ActivityItem
-                {
-                    Title = "Nuevo proyecto creado",
-                    Description = "Rediseño Web"
-                },
+    private async Task<string?> GetAccessTokenAsync()
+    {
+        return await _js.InvokeAsync<string?>("localStorage.getItem", AccessTokenKey);
+    }
 
-                new ActivityItem
-                {
-                    Title = "Tarea completada",
-                    Description = "Investigación de mercado"
-                },
+    private async Task<string?> GetRefreshTokenAsync()
+    {
+        return await _js.InvokeAsync<string?>("localStorage.getItem", RefreshTokenKey);
+    }
 
-                new ActivityItem
-                {
-                    Title = "Cliente actualizado",
-                    Description = "Central Café"
-                },
-
-                new ActivityItem
-                {
-                    Title = "Reporte generado",
-                    Description = "Reporte mensual"
-                }
-            };
-        }
-
-        public async Task<List<QuickAction>> GetQuickActions()
-        {
-            await Task.Delay(500);
-
-            return new List<QuickAction>
-            {
-                new QuickAction
-                {
-                    Name = "Nuevo proyecto"
-                },
-
-                new QuickAction
-                {
-                    Name = "Nueva tarea"
-                },
-
-                new QuickAction
-                {
-                    Name = "Agregar cliente"
-                },
-
-                new QuickAction
-                {
-                    Name = "Generar reporte"
-                }
-            };
-       
-        }    
+    private async Task ClearTokensAsync()
+    {
+        await _js.InvokeVoidAsync("localStorage.removeItem", AccessTokenKey);
+        await _js.InvokeVoidAsync("localStorage.removeItem", RefreshTokenKey);
+        _http.DefaultRequestHeaders.Authorization = null;
     }
 }

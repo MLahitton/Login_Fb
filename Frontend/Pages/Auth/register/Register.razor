@@ -1,91 +1,78 @@
-@using Frontend.Services.Auth
 @using Frontend.Models.Auth
+@using Frontend.Services.Auth
 
 @page "/register"
 @inject AuthApiService AuthService
 @inject NavigationManager Navigation
-<div class="register-container">
 
+<div class="register-container">
     <div class="left-panel">
         <img src="/img/primari.png" class="illustration" />
-
         <h3>Seguro y confiable</h3>
-
-        <p>
-            Protegemos tus datos con los más altos estándares.
-        </p>
-
+        <p>Protegemos tus datos con los mas altos estandares.</p>
     </div>
 
     <div class="right-panel">
-
         <h1>Crea tu cuenta</h1>
-
         <p>Empieza a gestionar todo en un solo lugar.</p>
 
         <EditForm Model="registerModel" OnValidSubmit="HandleRegister">
-
             <DataAnnotationsValidator />
 
             <div class="form-group">
                 <label>Nombre completo</label>
-
-                <InputText class="form-control"
-                            @bind-Value="registerModel.Name" />
-
-                <ValidationMessage For="@(() => registerModel.Name)" />
+                <InputText class="form-control" @bind-Value="registerModel.FullName" />
+                <ValidationMessage For="@(() => registerModel.FullName)" />
             </div>
 
             <div class="form-group">
                 <label>Email</label>
-
-                <InputText class="form-control"
-                            @bind-Value="registerModel.Email" />
-
+                <InputText class="form-control" @bind-Value="registerModel.Email" />
                 <ValidationMessage For="@(() => registerModel.Email)" />
             </div>
 
             <div class="form-group">
                 <label>Password</label>
-
-                <InputText type="password"
-                            class="form-control"
-                            @bind-Value="registerModel.Password" />
-
+                <InputText type="password" class="form-control" @bind-Value="registerModel.Password" />
                 <ValidationMessage For="@(() => registerModel.Password)" />
             </div>
 
-            <button class="register-button" type="submit">
-                Crear cuenta
+            <button class="register-button" type="submit" disabled="@isLoading">
+                @(isLoading ? "Creando..." : "Crear cuenta")
             </button>
-
         </EditForm>
+
+        @if (!string.IsNullOrWhiteSpace(statusMessage))
+        {
+            <p style="margin-top: 15px;">@statusMessage</p>
+        }
+
         <p style="margin-top:15px;">
-            ¿Tu tienes una Cuenta?
-            <a href="/login">Iniciarse</a>
+            Ya tienes una cuenta?
+            <a href="/login">Iniciar sesion</a>
         </p>
-
     </div>
-
 </div>
 
 @code {
+    private readonly RegisterRequest registerModel = new();
+    private string statusMessage = string.Empty;
+    private bool isLoading;
 
-    RegisterRequest registerModel = new();
-
-    async Task HandleRegister()
+    private async Task HandleRegister()
     {
-        try
-        {
-            await AuthService.Register(registerModel);
+        isLoading = true;
+        statusMessage = string.Empty;
 
-            Console.WriteLine("Registro exitoso");
-            Navigation.NavigateTo("/verify-code");
-            //Navigation.NavigateTo($"/verify-code?email={registerModel.Email}");
-        }
-        catch(Exception ex)
+        var response = await AuthService.Register(registerModel);
+
+        statusMessage = response.Message;
+        isLoading = false;
+
+        if (response.Success)
         {
-            Console.WriteLine(ex.Message);
+            var email = Uri.EscapeDataString(registerModel.Email);
+            Navigation.NavigateTo($"/verify-code?email={email}");
         }
     }
 }

@@ -1,89 +1,74 @@
-@using Frontend.Services.Auth
 @using Frontend.Models.Auth
+@using Frontend.Services.Auth
 
 @page "/login"
 @inject AuthApiService AuthService
-@inject NavigationManager Nav
+@inject NavigationManager Navigation
 
 <div class="register-container">
-
     <div class="left-panel">
         <img src="/img/candadito.png" class="illustration" />
-
         <h3>Tu seguridad es nuestra prioridad</h3>
-
-        <p>
-            Usamos cifrado en todas tus conexiones.
-        </p>
+        <p>Usamos cifrado en todas tus conexiones.</p>
     </div>
 
     <div class="right-panel">
-
         <h1>Bienvenido de vuelta</h1>
-
         <p>Ingresa para continuar a tu cuenta.</p>
 
-        <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
-
+        <EditForm Model="model" OnValidSubmit="HandleLogin">
             <DataAnnotationsValidator />
 
             <div class="form-group">
-                <label>Correo electrónico</label>
-
-                <InputText class="form-control"
-                        @bind-Value="loginModel.Email" />
-
-                <ValidationMessage For="@(() => loginModel.Email)" />
+                <label>Correo electronico</label>
+                <InputText class="form-control" @bind-Value="model.Email" />
+                <ValidationMessage For="@(() => model.Email)" />
             </div>
 
             <div class="form-group">
-                <label>Contraseña</label>
-
-                <InputText type="password"
-                            class="form-control"
-                            @bind-Value="loginModel.Password" />
-
-                <ValidationMessage For="@(() => loginModel.Password)" />
+                <label>Contrasena</label>
+                <InputText type="password" class="form-control" @bind-Value="model.Password" />
+                <ValidationMessage For="@(() => model.Password)" />
             </div>
+
             <p class="forgot-password">
-                <a href="/forgot-password">
-                    ¿Olvidaste tu contraseña?
-                </a>
+                <a href="/forgot-password">Olvidaste tu contrasena?</a>
             </p>
 
-            <button class="register-button" type="submit">
-                Iniciar sesión
+            <button class="register-button" type="submit" disabled="@isLoading">
+                @(isLoading ? "Ingresando..." : "Iniciar sesion")
             </button>
-
         </EditForm>
 
+        @if (!string.IsNullOrWhiteSpace(statusMessage))
+        {
+            <p style="margin-top: 15px;">@statusMessage</p>
+        }
+
         <p style="margin-top:15px;">
-            ¿No tienes una cuenta?
-            <a href="/register">Regístrate</a>
+            No tienes una cuenta?
+            <a href="/register">Registrate</a>
         </p>
-
     </div>
-
 </div>
 
 @code {
+    private readonly LoginRequest model = new();
+    private string statusMessage = string.Empty;
+    private bool isLoading;
 
-    LoginRequest loginModel = new();
-
-    async Task HandleLogin()
+    private async Task HandleLogin()
     {
-        try
-        {
-            await AuthService.Login(loginModel);
+        isLoading = true;
+        statusMessage = string.Empty;
 
-            Console.WriteLine("Login exitoso");
+        var response = await AuthService.Login(model);
+        statusMessage = response.Message;
+        isLoading = false;
 
-            // Redirigir después de login
-            Nav.NavigateTo("/dashboard");
-        }
-        catch (Exception ex)
+        if (response.Success)
         {
-            Console.WriteLine(ex.Message);
+            Navigation.NavigateTo("/dashboard");
         }
     }
 }
